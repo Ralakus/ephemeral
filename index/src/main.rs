@@ -46,9 +46,8 @@ impl Component for Content {
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             Message::Send => {
-                let input = self.input.cast::<HtmlInputElement>();
-                if let Some(input) = input {
-                    if input.value().len() < 1 {
+                if let Some(input) = self.input.cast::<HtmlInputElement>() {
+                    if input.value().is_empty() {
                         return false;
                     }
 
@@ -93,12 +92,9 @@ impl Component for Content {
         html! {
             <>
 
-            <main class="flex flex-grow mx-12 md:mx-32 my-8 flex-col-reverse overflow-auto">
+            <main class="flex flex-grow mx-12 md:mx-32 my-8 flex-col-reverse overflow-auto font-mono">
             {
-                self.calls.iter().rev().filter(|c| match c {
-                    ClientCall::Ok(_) => false,
-                    _ => true
-                }).map(|c| {
+                self.calls.iter().rev().filter(|c| !matches!(c, ClientCall::Ok(_))).map(|c| {
                     let server_color = "text-orange-400";
                     let server_prefix = String::from("Server");
                     let display_pair = match c {
@@ -109,7 +105,7 @@ impl Component for Content {
                             server_color, server_prefix, format!("{} disconnected", username)
                         ),
                         ClientCall::Error(error) => (
-                            "text-red-700",server_prefix, error.clone()
+                            "text-red-500 font-bold", "ERROR".to_string(), error.clone()
                         ),
                         ClientCall::Notification(message) => (
                             server_color, server_prefix, message.clone()
@@ -138,13 +134,13 @@ impl Component for Content {
             <footer class="flex px-3 mb-6 w-full px-12 md:px-32">
                 <input ref={self.input.clone()} {onkeypress} type="text"
                     placeholder={
-                        if let Some(username) = self.username.clone() {
-                            format!("Message as {}...", username) 
+                        if let Some(ref username) = self.username {
+                            format!("Message as {}...", username)
                         } else {
                             "Please enter a username...".to_string()
                         }
                     }
-                    class="block w-full rounded-tl rounded-bl border border-neutral-400 focus:outline-none focus:border-emerald-700 focus:border px-2"
+                    class="font-mono block w-full rounded-tl rounded-bl border border-neutral-400 focus:outline-none focus:border-emerald-700 focus:border px-2"
                 />
                 <button {onclick} class="flex h-8 w-8 p-1 rounded-tr rounded-br transition ease-in-out bg-neutral-400 hover:bg-emerald-700">
                     <svg fill="#000000" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-white">

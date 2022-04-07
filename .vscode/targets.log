@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Tue Apr  5 18:43:39 2022
+# Make data base, printed on Thu Apr  7 09:46:02 2022
 
 # Variables
 
@@ -21,9 +21,9 @@ NO_AT_BRIDGE = 1
 # environment
 __GL_MaxFramesAllowed = 1
 # environment
-VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-a9d3f58d-88df-43f9-b3b4-ce4080bc4c14.sock
+VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-a1157764-d418-41d4-80e7-8ebdd93e9354.sock
 # environment
-GNOME_KEYRING_CONTROL = /home/mikhail/.cache/keyring-TAI1J1
+GNOME_KEYRING_CONTROL = /home/mikhail/.cache/keyring-VXG7J1
 # environment
 VSCODE_CWD = /home/mikhail/Projects/ephemeral
 # default
@@ -61,11 +61,11 @@ XAUTHORITY = /home/mikhail/.Xauthority
 # default
 .INCLUDE_DIRS = /usr/include /usr/local/include /usr/include
 # environment
-GNOME_TERMINAL_SERVICE = :1.64
+GNOME_TERMINAL_SERVICE = :1.72
 # makefile
 MAKEFLAGS = pqrR
 # environment
-DBUS_STARTER_ADDRESS = unix:path=/run/user/1000/bus,guid=82596b7c80e4fb8a7e049b67624cc609
+DBUS_STARTER_ADDRESS = unix:path=/run/user/1000/bus,guid=09be7bc5722b216dedd29f3a624eea94
 # makefile
 CURDIR := /home/mikhail/Projects/ephemeral
 # environment
@@ -77,7 +77,7 @@ APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
 # environment
 MFLAGS = -pqrR
 # environment
-SSH_AUTH_SOCK = /home/mikhail/.cache/keyring-TAI1J1/ssh
+SSH_AUTH_SOCK = /home/mikhail/.cache/keyring-VXG7J1/ssh
 # default
 .SHELLFLAGS := -c
 # environment
@@ -95,7 +95,7 @@ MAKEFILE_LIST := makefile
 # environment
 VSCODE_VERBOSE_LOGGING = true
 # environment
-VSCODE_PID = 2659
+VSCODE_PID = 3866
 # environment
 HISTIGNORE = &:[bf]g:exit
 # environment
@@ -103,7 +103,7 @@ XDG_SESSION_TYPE = x11
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
 # environment
-SESSION_MANAGER = local/skye:@/tmp/.ICE-unix/1735,unix/skye:/tmp/.ICE-unix/1735
+SESSION_MANAGER = local/skye:@/tmp/.ICE-unix/1741,unix/skye:/tmp/.ICE-unix/1741
 # automatic
 *F = $(notdir $*)
 # environment
@@ -111,7 +111,7 @@ QT_QPA_PLATFORMTHEME = gtk2
 # environment
 CHROME_DESKTOP = code-oss-url-handler.desktop
 # environment
-DBUS_SESSION_BUS_ADDRESS = unix:path=/run/user/1000/bus,guid=82596b7c80e4fb8a7e049b67624cc609
+DBUS_SESSION_BUS_ADDRESS = unix:path=/run/user/1000/bus,guid=09be7bc5722b216dedd29f3a624eea94
 # automatic
 <D = $(patsubst %/,%,$(dir $<))
 # environment
@@ -129,7 +129,7 @@ INPUTRC = /etc/inputrc
 # environment
 SHLVL = 2
 # environment
-GNOME_TERMINAL_SCREEN = /org/gnome/Terminal/screen/56f30557_46d9_4ee9_96bd_e8136dd16b72
+GNOME_TERMINAL_SCREEN = /org/gnome/Terminal/screen/e69879a9_317a_4637_8f6b_5f1753af74ff
 # environment
 ELECTRON_TRASH = gio
 # environment
@@ -169,7 +169,7 @@ TAILWIND_CONFIG = index/tailwind.config.js
 # makefile
 .DEFAULT_GOAL := dist
 # environment
-SYSTEMD_EXEC_PID = 1747
+SYSTEMD_EXEC_PID = 1753
 # makefile (from 'makefile', line 7)
 TRUNK_FLAGS = 
 # environment
@@ -257,7 +257,7 @@ target/css:
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (from 'makefile', line 32):
-	NODE_ENV=production tailwindcss -c $(TAILWIND_CONFIG) -o ./target/tailwind.css --minify
+	NODE_ENV=production tailwindcss -c $(TAILWIND_CONFIG) -o target/tailwind.css --minify
 
 target/common:
 #  Implicit rule search has not been done.
@@ -280,7 +280,6 @@ dist_directories:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
- 
 
 # Not a target:
 all:
@@ -289,6 +288,7 @@ all:
 #  File does not exist.
 #  File has not been updated.
 
+ 
 run: dist
 #  Implicit rule search has not been done.
 #  Modification time never checked.
@@ -314,7 +314,7 @@ target/server: dist_directories
 # Not a target:
 makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-04-05 12:23:50.484738041
+#  Last modified 2022-04-06 12:19:55.294232032
 #  File has been updated.
 #  Successfully updated.
 
@@ -352,6 +352,6 @@ target/index: dist_directories target/css
 # strcache performance: lookups = 53 / hit rate = 47%
 # hash-table stats:
 # Load=28/8192=0%, Rehash=0, Collisions=0/53=0%
-# Finished Make data base on Tue Apr  5 18:43:39 2022
+# Finished Make data base on Thu Apr  7 09:46:02 2022
 
  

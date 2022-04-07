@@ -1,6 +1,7 @@
-use common::socket::ClientCall;
 use std::collections::HashSet;
 use yew_agent::{Agent, AgentLink, Context, HandlerId};
+
+use common::socket::ClientCall;
 
 pub struct EventBus {
     link: AgentLink<EventBus>,

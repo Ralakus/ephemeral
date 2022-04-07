@@ -55,7 +55,7 @@ impl WebSocketService {
                     Err(WebSocketError::ConnectionClose(_)) => {
                         log::debug!("Closing websocket");
                         break;
-                    },
+                    }
                     _ => {
                         log::error!("Recieved non-text response from websocket: {:?}", message);
                         continue;
@@ -75,7 +75,12 @@ impl WebSocketService {
                 event_bus.send(call);
             }
 
-            log::debug!("Websocket disconnected")
+            let close_error = ClientCall::Error(
+                "Websocket closed. Please reload page to attempt reconnect".to_string(),
+            );
+            event_bus.send(close_error);
+
+            log::debug!("Websocket disconnected");
         });
 
         Self { tx }

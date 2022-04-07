@@ -114,27 +114,18 @@ async fn handle_socket(clients: Clients, socket: warp::ws::WebSocket) {
 
     {
         let mut clients = clients.write().await;
-        match clients.get_mut(&uuid) {
-            Some(client) => match &client.username {
-                Some(username) => {
-                    let username = username.clone();
-                    match broadcast_to_clients(
-                        uuid,
-                        &clients,
-                        ClientCall::Disconnection { username },
-                    )
-                    .await
-                    {
-                        Ok(_) => (),
-                        Err(e) => eprintln!(
-                            "Failed to broadcast client's {} disconnection : {}",
-                            uuid, e
-                        ),
-                    }
+        if let Some(client) = clients.get_mut(&uuid) {
+            if let Some(username) = client.username.clone() {
+                if let Err(e) =
+                    broadcast_to_clients(uuid, &clients, ClientCall::Disconnection { username })
+                        .await
+                {
+                    eprintln!(
+                        "Failed to broadcast client's {} disconnection : {}",
+                        uuid, e
+                    );
                 }
-                None => (),
-            },
-            None => (),
+            }
         }
     }
 
@@ -145,13 +136,13 @@ async fn handle_socket(clients: Clients, socket: warp::ws::WebSocket) {
 async fn handle_client_msg(uuid: u128, clients: &Clients, message: Message) {
     println!("Call from client {} : {:?}", uuid, message);
     let message = match message.to_str() {
-        Ok(m) => format!("{}", m),
+        Ok(m) => m.to_string(),
         Err(_) => {
             let response = format!("Call from client {} : Non text. Invalid call", uuid);
             format!("{{\"error\":\"{}\"}}", response)
         }
     };
-        
+
     let message = match serde_json::from_str(&message) {
         Ok(m) => m,
         Err(e) => {
@@ -217,7 +208,7 @@ async fn handle_client_msg(uuid: u128, clients: &Clients, message: Message) {
         }
     };
 
-    if let Err(e) = send_to_client(uuid, &clients, response).await {
+    if let Err(e) = send_to_client(uuid, clients, response).await {
         eprintln!("Failed to send response to client {} : {}", uuid, e);
     }
 }
@@ -241,7 +232,8 @@ async fn send_to_client(
         }
         None => Err(ServerError {
             message: format!("Client {} does not have an mspc sender", uuid),
-        })?,
+        }
+        .into()),
     }
 }
 
@@ -250,6 +242,7 @@ async fn broadcast_to_clients(
     clients: &ClientsInner,
     payload: ClientCall,
 ) -> Result<(), Box<dyn std::error::Error>> {
+    println!("Recieved broadcast event from {} : {:?}", uuid, payload);
     let json = serde_json::to_string(&payload)?;
     for (c_uuid, c) in clients.iter() {
         if let Some(sender) = &c.sender {
