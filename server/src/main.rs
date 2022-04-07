@@ -139,8 +139,7 @@ async fn handle_client_msg(uuid: u128, clients: &Clients, message: Message) {
     let message = if let Ok(m) = message.to_str() {
         m.to_string()
     } else {
-        let response = format!("Call from client {} : Non text. Invalid call", uuid);
-        format!("{{\"error\":\"{}\"}}", response)
+        return;
     };
 
     let message = match serde_json::from_str(&message) {

@@ -9,7 +9,7 @@ TRUNK_FLAGS =
 TRUNK_BUILD_FILE = index/index.html
 TAILWIND_CONFIG  = index/tailwind.config.js
 
-dist: target/server target/index
+dist: target/index target/server
 
 dist_directories:
 	if [ -d "$(OUT_DIR)" ]; then rm -r $(OUT_DIR); fi
@@ -37,5 +37,8 @@ target/index: dist_directories target/css
 run: dist
 	cd $(OUT_DIR); ./server 8000
 
+run_release: release
+	cd $(OUT_DIR); ./server 80
+
 watch:
-	cargo watch --no-gitignore --ignore $(OUT_DIR) --ignore makefile --ignore readme.md --ignore license -s "make run"
+	cargo watch --no-gitignore --ignore $(OUT_DIR) --ignore makefile --ignore dockerfile --ignore readme.md --ignore license -s "make run"

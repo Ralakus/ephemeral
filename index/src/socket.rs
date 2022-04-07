@@ -13,18 +13,23 @@ pub struct WebSocketService {
 
 impl WebSocketService {
     pub fn new() -> Self {
-        let host = web_sys::window()
+        let location = web_sys::window()
             .expect("Failed to get html window")
             .document()
             .expect("Failed to get html document")
             .location()
-            .expect("Failed to get url location")
-            .host()
-            .expect("Failed to get host");
-        let ws = WebSocket::open(&format!("ws://{}/", host))
-            .expect("Failed to connect to server websocket");
+            .expect("Failed to get url location");
 
-        log::debug!("Websocket connected: {}", host);
+        let host = location.host().expect("Failed to get host");
+        let origin = location.origin().expect("Failed to get origin");
+
+        let secure = origin.starts_with("https");
+
+        let socket_url = format!("{}://{}/", if secure { "wss" } else { "ws" }, host);
+
+        let ws = WebSocket::open(&socket_url).expect("Failed to connect to server websocket");
+
+        log::debug!("Websocket connected: {}", &socket_url);
 
         let (mut ws_tx, mut ws_rx) = ws.split();
         let (tx, mut rx) = futures::channel::mpsc::channel::<ServerCall>(512);
