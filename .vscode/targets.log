@@ -1,0 +1,357 @@
+make all --print-data-base --no-builtin-variables --no-builtin-rules --question
+make: *** No rule to make target 'all'.  Stop.
+
+# GNU Make 4.3
+# Built for x86_64-solus-linux-gnu
+# Copyright (C) 1988-2020 Free Software Foundation, Inc.
+# License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+# This is free software: you are free to change and redistribute it.
+# There is NO WARRANTY, to the extent permitted by law.
+
+# Make data base, printed on Tue Apr  5 18:43:39 2022
+
+# Variables
+
+# environment
+GDK_BACKEND = x11
+# environment
+LC_ALL = C
+# environment
+NO_AT_BRIDGE = 1
+# environment
+__GL_MaxFramesAllowed = 1
+# environment
+VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-a9d3f58d-88df-43f9-b3b4-ce4080bc4c14.sock
+# environment
+GNOME_KEYRING_CONTROL = /home/mikhail/.cache/keyring-TAI1J1
+# environment
+VSCODE_CWD = /home/mikhail/Projects/ephemeral
+# default
+MAKE_COMMAND := make
+# automatic
+@D = $(patsubst %/,%,$(dir $@))
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# default
+.VARIABLES := 
+# environment
+PWD = /home/mikhail/Projects/ephemeral
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# environment
+XDG_DATA_DIRS = /usr/share
+# makefile (from 'makefile', line 9)
+TRUNK_BUILD_FILE = index/index.html
+# automatic
+^D = $(patsubst %/,%,$(dir $^))
+# environment
+VSCODE_LOG_STACK = true
+# automatic
+%F = $(notdir $%)
+# environment
+VSCODE_CODE_CACHE_PATH = /home/mikhail/.config/Code - OSS/CachedData/c722ca6c7eed3d7987c0d5c3df5c45f6b15e77d1
+# environment
+XDG_SESSION_PATH = /org/freedesktop/DisplayManager/Session0
+# environment
+LANG = C
+# environment
+XAUTHORITY = /home/mikhail/.Xauthority
+# default
+.LOADED := 
+# default
+.INCLUDE_DIRS = /usr/include /usr/local/include /usr/include
+# environment
+GNOME_TERMINAL_SERVICE = :1.64
+# makefile
+MAKEFLAGS = pqrR
+# environment
+DBUS_STARTER_ADDRESS = unix:path=/run/user/1000/bus,guid=82596b7c80e4fb8a7e049b67624cc609
+# makefile
+CURDIR := /home/mikhail/Projects/ephemeral
+# environment
+VSCODE_PIPE_LOGGING = true
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# environment
+MFLAGS = -pqrR
+# environment
+SSH_AUTH_SOCK = /home/mikhail/.cache/keyring-TAI1J1/ssh
+# default
+.SHELLFLAGS := -c
+# environment
+HISTSIZE = 1000
+# environment
+XDG_CONFIG_DIRS = /usr/share/xdg:/etc/xdg:/usr/share
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# environment
+XDG_SESSION_DESKTOP = budgie-desktop
+# makefile (from 'makefile', line 1)
+MAKEFILE_LIST := makefile
+# automatic
+@F = $(notdir $@)
+# environment
+VSCODE_VERBOSE_LOGGING = true
+# environment
+VSCODE_PID = 2659
+# environment
+HISTIGNORE = &:[bf]g:exit
+# environment
+XDG_SESSION_TYPE = x11
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
+# environment
+SESSION_MANAGER = local/skye:@/tmp/.ICE-unix/1735,unix/skye:/tmp/.ICE-unix/1735
+# automatic
+*F = $(notdir $*)
+# environment
+QT_QPA_PLATFORMTHEME = gtk2
+# environment
+CHROME_DESKTOP = code-oss-url-handler.desktop
+# environment
+DBUS_SESSION_BUS_ADDRESS = unix:path=/run/user/1000/bus,guid=82596b7c80e4fb8a7e049b67624cc609
+# automatic
+<D = $(patsubst %/,%,$(dir $<))
+# environment
+VSCODE_NLS_CONFIG = {"locale":"en-us","availableLanguages":{},"_languagePackSupport":true}
+# default
+MAKE_HOST := x86_64-solus-linux-gnu
+# makefile
+SHELL = /bin/sh
+# default
+MAKECMDGOALS := all
+# environment
+XMODIFIERS = @im=ibus
+# environment
+INPUTRC = /etc/inputrc
+# environment
+SHLVL = 2
+# environment
+GNOME_TERMINAL_SCREEN = /org/gnome/Terminal/screen/56f30557_46d9_4ee9_96bd_e8136dd16b72
+# environment
+ELECTRON_TRASH = gio
+# environment
+MAKELEVEL := 0
+# makefile (from 'makefile', line 6)
+CARGO_FLAGS = 
+# default
+MAKE = $(MAKE_COMMAND)
+# environment
+PATH = /home/mikhail/.phpenv/shims:/home/mikhail/.local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin:/home/mikhail/.cargo/bin:/home/mikhail/.local/bin:/usr/lib64/openjdk-8/bin:/home/mikhail/.phpenv/bin
+# default
+MAKEFILES := 
+# automatic
+^F = $(notdir $^)
+# makefile (from 'makefile', line 2)
+OUT_DIR = dist
+# environment
+VSCODE_LOG_NATIVE = false
+# automatic
+?F = $(notdir $?)
+# environment
+XDG_CURRENT_DESKTOP = Budgie:GNOME
+# automatic
++F = $(notdir $+)
+# environment
+XDG_SEAT_PATH = /org/freedesktop/DisplayManager/Seat0
+# environment
+DESKTOP_SESSION = budgie-desktop
+# environment
+ORIGINAL_XDG_CURRENT_DESKTOP = Budgie:GNOME
+# 'override' directive
+GNUMAKEFLAGS := 
+# environment
+LOGNAME = mikhail
+# makefile (from 'makefile', line 10)
+TAILWIND_CONFIG = index/tailwind.config.js
+# makefile
+.DEFAULT_GOAL := dist
+# environment
+SYSTEMD_EXEC_PID = 1747
+# makefile (from 'makefile', line 7)
+TRUNK_FLAGS = 
+# environment
+DISPLAY = :0
+# environment
+GTK_MODULES = gail:atk-bridge
+# environment
+USER = mikhail
+# default
+MAKE_VERSION := 4.3
+# environment
+DBUS_STARTER_BUS_TYPE = session
+# environment
+_ = /usr/bin/make
+# environment
+XDG_RUNTIME_DIR = /run/user/1000
+# environment
+COLORTERM = truecolor
+# environment
+XDG_SESSION_CLASS = user
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
+# environment
+HOME = /home/mikhail
+# environment
+QT_IM_MODULE = ibus
+# makefile (from 'makefile', line 5)
+BUILD_MODE = debug
+# environment
+ELECTRON_RUN_AS_NODE = 1
+# environment
+VSCODE_IPC_HOOK = /run/user/1000/vscode-752a1daa-1.65.2-main.sock
+# environment
+TERM = xterm-256color
+# default
+.RECIPEPREFIX := 
+# automatic
+<F = $(notdir $<)
+# default
+SUFFIXES := 
+# environment
+QT_AUTO_SCREEN_SCALE_FACTOR = 0
+# environment
+VSCODE_CLI = 1
+# environment
+ELECTRON_NO_ATTACH_CONSOLE = 1
+# environment
+VTE_VERSION = 6402
+# environment
+XDG_GREETER_DATA_DIR = /var/lib/lightdm-data/mikhail
+# default
+.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell nocomment grouped-target extra-prereqs archives jobserver output-sync check-symlink load
+# environment
+XDG_MENU_PREFIX = gnome-
+# makefile (from 'makefile', line 3)
+WWW = $(OUT_DIR)/www
+# environment
+GDMSESSION = budgie-desktop
+# variable set hash-table stats:
+# Load=108/1024=11%, Rehash=0, Collisions=12/141=9%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# . (device 64770, inode 49808946): 15 files, no impossibilities.
+
+# 15 files, no impossibilities in 1 directories.
+
+# Implicit Rules
+
+# No implicit rules.
+
+# Files
+
+dist: target/server target/index
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+target/css:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'makefile', line 32):
+	NODE_ENV=production tailwindcss -c $(TAILWIND_CONFIG) -o ./target/tailwind.css --minify
+
+target/common:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'makefile', line 25):
+	cargo build --bin common $(CARGO_FLAGS)
+
+dist_directories:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'makefile', line 15):
+	if [ -d "$(OUT_DIR)" ]; then rm -r $(OUT_DIR); fi
+	mkdir $(OUT_DIR)
+	mkdir $(WWW)
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+ 
+
+# Not a target:
+all:
+#  Command line target.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has not been updated.
+
+run: dist
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'makefile', line 38):
+	cd $(OUT_DIR); ./server 8000
+
+watch:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'makefile', line 41):
+	cargo watch --no-gitignore --ignore $(OUT_DIR) --ignore makefile --ignore readme.md --ignore license -s "make run"
+
+target/server: dist_directories
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'makefile', line 28):
+	cargo build --bin server $(CARGO_FLAGS)
+	cp target/$(BUILD_MODE)/server $(OUT_DIR)
+
+# Not a target:
+makefile:
+#  Implicit rule search has been done.
+#  Last modified 2022-04-05 12:23:50.484738041
+#  File has been updated.
+#  Successfully updated.
+
+# makefile (from 'makefile', line 20)
+release: CARGO_FLAGS += --release
+# makefile (from 'makefile', line 21)
+release: TRUNK_FLAGS += --release
+# makefile (from 'makefile', line 19)
+release: BUILD_MODE = release
+release: dist
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+# variable set hash-table stats:
+# Load=3/32=9%, Rehash=0, Collisions=0/6=0%
+
+target/index: dist_directories target/css
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'makefile', line 35):
+	trunk build $(TRUNK_BUILD_FILE) -d $(WWW) $(TRUNK_FLAGS)
+
+# files hash-table stats:
+# Load=13/1024=1%, Rehash=0, Collisions=0/36=0%
+# VPATH Search Paths
+
+# No 'vpath' search paths.
+
+# No general ('VPATH' variable) search path.
+
+# strcache buffers: 1 (0) / strings = 28 / storage = 252 B / avg = 9 B
+# current buf: size = 8162 B / used = 252 B / count = 28 / avg = 9 B
+
+# strcache performance: lookups = 53 / hit rate = 47%
+# hash-table stats:
+# Load=28/8192=0%, Rehash=0, Collisions=0/53=0%
+# Finished Make data base on Tue Apr  5 18:43:39 2022
+
+ 

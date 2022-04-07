@@ -1,0 +1,17 @@
+[package]
+authors = ["Mikhail Licas <mikhail@licas.dev>"]
+description = "Self contained webserver the ephemeral messaging service"
+
+name = "server"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+common = { path = "../common" }
+
+clap = { version = "3", features = ["derive"] }
+futures = "0.3"
+tokio = { version = "1", features = ["full"] }
+tokio-stream = "0.1"
+uuid = { version = "0.8", features = ["v4"] }
+warp = "0.3"

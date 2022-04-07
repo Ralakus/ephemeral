@@ -1,0 +1,11 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/home/mikhail/Projects/ephemeral'
+if [ -d "dist" ]; then rm -r dist; fi
+mkdir dist
+mkdir dist/www
+cargo build --bin server 
+cp target/debug/server dist
+NODE_ENV=production tailwindcss -c index/tailwind.config.js -o ./target/tailwind.css --minify
+trunk build index/index.html -d dist/www 
+make: Leaving directory '/home/mikhail/Projects/ephemeral'
+ 
