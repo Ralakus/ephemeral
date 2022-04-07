@@ -1,8 +1,6 @@
 FROM debian:latest
 
-ENV PORT=80
-EXPOSE $PORT/tcp
-EXPOSE $PORT/udp
+EXPOSE 80
 
 WORKDIR /usr/src/ephemeral/
 
