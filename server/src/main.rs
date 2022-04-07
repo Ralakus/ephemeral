@@ -1,3 +1,5 @@
+#![warn(clippy::nursery, clippy::pedantic)]
+
 use clap::Parser;
 use futures::{FutureExt, StreamExt};
 use uuid::Uuid;
@@ -117,8 +119,7 @@ async fn handle_socket(clients: Clients, socket: warp::ws::WebSocket) {
         if let Some(client) = clients.get_mut(&uuid) {
             if let Some(username) = client.username.clone() {
                 if let Err(e) =
-                    broadcast_to_clients(uuid, &clients, ClientCall::Disconnection { username })
-                        .await
+                    broadcast_to_clients(uuid, &clients, &ClientCall::Disconnection { username })
                 {
                     eprintln!(
                         "Failed to broadcast client's {} disconnection : {}",
@@ -135,12 +136,11 @@ async fn handle_socket(clients: Clients, socket: warp::ws::WebSocket) {
 
 async fn handle_client_msg(uuid: u128, clients: &Clients, message: Message) {
     println!("Call from client {} : {:?}", uuid, message);
-    let message = match message.to_str() {
-        Ok(m) => m.to_string(),
-        Err(_) => {
-            let response = format!("Call from client {} : Non text. Invalid call", uuid);
-            format!("{{\"error\":\"{}\"}}", response)
-        }
+    let message = if let Ok(m) = message.to_str() {
+        m.to_string()
+    } else {
+        let response = format!("Call from client {} : Non text. Invalid call", uuid);
+        format!("{{\"error\":\"{}\"}}", response)
     };
 
     let message = match serde_json::from_str(&message) {
@@ -156,12 +156,11 @@ async fn handle_client_msg(uuid: u128, clients: &Clients, message: Message) {
 
     let response = {
         let mut clients = clients.write().await;
-        let client = match clients.get_mut(&uuid) {
-            Some(c) => c,
-            None => {
-                println!("Client {} does not exist", uuid);
-                return;
-            }
+        let client = if let Some(c) = clients.get_mut(&uuid) {
+            c
+        } else {
+            println!("Client {} does not exist", uuid);
+            return;
         };
 
         match message {
@@ -170,12 +169,10 @@ async fn handle_client_msg(uuid: u128, clients: &Clients, message: Message) {
                 match broadcast_to_clients(
                     uuid,
                     &clients,
-                    ClientCall::Connection {
+                    &ClientCall::Connection {
                         username: username.clone(),
                     },
-                )
-                .await
-                {
+                ) {
                     Ok(_) => ClientCall::Ok(format!(
                         "Successfully connected with username : {}",
                         username
@@ -199,7 +196,7 @@ async fn handle_client_msg(uuid: u128, clients: &Clients, message: Message) {
                     content,
                 };
 
-                match broadcast_to_clients(uuid, &clients, payload).await {
+                match broadcast_to_clients(uuid, &clients, &payload) {
                     Ok(_) => ClientCall::Ok("Successfully sent message".to_string()),
                     Err(e) => ClientCall::Error(format!("Failed to send message: {}", e)),
                 }
@@ -237,10 +234,10 @@ async fn send_to_client(
     }
 }
 
-async fn broadcast_to_clients(
+fn broadcast_to_clients(
     uuid: u128,
     clients: &ClientsInner,
-    payload: ClientCall,
+    payload: &ClientCall,
 ) -> Result<(), Box<dyn std::error::Error>> {
     println!("Recieved broadcast event from {} : {:?}", uuid, payload);
     let json = serde_json::to_string(&payload)?;

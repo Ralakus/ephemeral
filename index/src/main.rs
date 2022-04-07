@@ -1,3 +1,5 @@
+#![warn(clippy::nursery, clippy::pedantic)]
+
 use common::socket::{ClientCall, ServerCall};
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
@@ -6,7 +8,7 @@ use yew_agent::{Bridge, Bridged};
 mod event;
 mod socket;
 
-use event::EventBus;
+use event::Bus;
 use socket::WebSocketService;
 
 enum Message {
@@ -19,7 +21,7 @@ struct Content {
     username: Option<String>,
     wss: WebSocketService,
     input: NodeRef,
-    _producer: Box<dyn Bridge<EventBus>>,
+    _producer: Box<dyn Bridge<Bus>>,
 }
 
 impl Component for Content {
@@ -39,7 +41,7 @@ impl Component for Content {
             username: None,
             wss: WebSocketService::new(),
             input: NodeRef::default(),
-            _producer: EventBus::bridge(ctx.link().callback(Message::Call)),
+            _producer: Bus::bridge(ctx.link().callback(Message::Call)),
         }
     }
 
@@ -134,11 +136,10 @@ impl Component for Content {
             <footer class="flex px-3 mb-6 w-full px-12 md:px-32">
                 <input ref={self.input.clone()} {onkeypress} type="text"
                     placeholder={
-                        if let Some(ref username) = self.username {
-                            format!("Message as {}...", username)
-                        } else {
-                            "Please enter a username...".to_string()
-                        }
+                        self.username.as_ref().map_or_else(
+                            || "Please enter a username...".to_string(),
+                            |username| format!("Message as {}...", username)
+                        )
                     }
                     class="font-mono block w-full rounded-tl rounded-bl border border-neutral-400 focus:outline-none focus:border-emerald-700 focus:border px-2"
                 />

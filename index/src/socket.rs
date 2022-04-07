@@ -5,7 +5,7 @@ use yew_agent::Dispatched;
 
 use common::socket::{ClientCall, ServerCall};
 
-use crate::event::EventBus;
+use crate::event::Bus;
 
 pub struct WebSocketService {
     pub tx: Sender<ServerCall>,
@@ -28,7 +28,7 @@ impl WebSocketService {
 
         let (mut ws_tx, mut ws_rx) = ws.split();
         let (tx, mut rx) = futures::channel::mpsc::channel::<ServerCall>(512);
-        let mut event_bus = EventBus::dispatcher();
+        let mut event_bus = Bus::dispatcher();
 
         // Event bus reader
         spawn_local(async move {
