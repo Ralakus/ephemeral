@@ -64,6 +64,7 @@ impl Component for Content {
                             content: input.value(),
                         }
                     };
+
                     if let Err(e) = self.wss.tx.try_send(call) {
                         let error = format!("Failed to send websocket message: {}", e);
                         log::error!("{}", error);

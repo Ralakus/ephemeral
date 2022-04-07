@@ -154,8 +154,9 @@ async fn handle_client_msg(uuid: u128, clients: &Clients, message: Message) {
         }
     };
 
+    let mut clients = clients.write().await;
+
     let response = {
-        let mut clients = clients.write().await;
         let client = if let Some(c) = clients.get_mut(&uuid) {
             c
         } else {
@@ -166,21 +167,14 @@ async fn handle_client_msg(uuid: u128, clients: &Clients, message: Message) {
         match message {
             ServerCall::Connect { username } => {
                 client.username = Some(username.clone());
-                match broadcast_to_clients(
-                    uuid,
-                    &clients,
-                    &ClientCall::Connection {
-                        username: username.clone(),
-                    },
-                ) {
-                    Ok(_) => ClientCall::Ok(format!(
-                        "Successfully connected with username : {}",
-                        username
-                    )),
-                    Err(e) => ClientCall::Error(format!(
-                        "Failed to send connection notification to other clients : {}",
-                        e
-                    )),
+
+                let payload = ClientCall::Connection { username };
+
+                match broadcast_to_clients(uuid, &clients, &payload) {
+                    Ok(_) => ClientCall::Ok("Successfully broadcasted connect message".into()),
+                    Err(e) => {
+                        ClientCall::Error(format!("Failed to broadcast connect message : {}", e))
+                    }
                 }
             }
             ServerCall::Send { content } => {
@@ -191,6 +185,7 @@ async fn handle_client_msg(uuid: u128, clients: &Clients, message: Message) {
                         return;
                     }
                 };
+
                 let payload = ClientCall::PushMessage {
                     sender: username.to_string(),
                     content,
@@ -205,33 +200,36 @@ async fn handle_client_msg(uuid: u128, clients: &Clients, message: Message) {
         }
     };
 
-    if let Err(e) = send_to_client(uuid, clients, response).await {
+    let client = if let Some(c) = clients.get(&uuid) {
+        c
+    } else {
+        println!("Client {} does not exist", uuid);
+        return;
+    };
+
+    if let Err(e) = send_to_client(uuid, &client, &response) {
         eprintln!("Failed to send response to client {} : {}", uuid, e);
     }
 }
 
-async fn send_to_client(
+fn send_to_client(
     uuid: u128,
-    clients: &Clients,
-    payload: ClientCall,
+    client: &Client,
+    payload: &ClientCall,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let mut client_lock = clients.write().await;
-
-    let client = client_lock.get_mut(&uuid).ok_or(ServerError {
-        message: format!("Client {} does not exist", uuid),
-    })?;
-
-    match &client.sender {
-        Some(s) => {
+    client.sender.as_ref().map_or_else(
+        || {
+            Err(ServerError {
+                message: format!("Client {} does not have an mspc sender", uuid),
+            }
+            .into())
+        },
+        |sender| {
             let payload = serde_json::to_string(&payload)?;
-            s.send(Ok(Message::text(payload)))?;
+            sender.send(Ok(Message::text(payload)))?;
             Ok(())
-        }
-        None => Err(ServerError {
-            message: format!("Client {} does not have an mspc sender", uuid),
-        }
-        .into()),
-    }
+        },
+    )
 }
 
 fn broadcast_to_clients(
@@ -239,17 +237,19 @@ fn broadcast_to_clients(
     clients: &ClientsInner,
     payload: &ClientCall,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    println!("Recieved broadcast event from {} : {:?}", uuid, payload);
     let json = serde_json::to_string(&payload)?;
-    for (c_uuid, c) in clients.iter() {
-        if let Some(sender) = &c.sender {
-            if let Err(e) = sender.send(Ok(Message::text(&json))) {
+    for (client_uuid, client) in clients {
+        client
+            .sender
+            .as_ref()
+            .map(|sender| sender.send(Ok(Message::text(&json))).err())
+            .flatten()
+            .map(|e| {
                 eprintln!(
                     "Failed to send message to client {} from client {} : {}",
-                    c_uuid, uuid, e
+                    client_uuid, uuid, e
                 );
-            }
-        }
+            });
     }
 
     Ok(())
