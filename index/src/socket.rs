@@ -75,7 +75,7 @@ impl WebSocketService {
                     }
                 };
 
-                log::debug!("{:?}", call);
+                log::debug!("{}", call);
 
                 event_bus.send(call);
             }

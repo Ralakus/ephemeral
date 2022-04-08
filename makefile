@@ -34,11 +34,20 @@ target/css:
 target/index: dist_directories target/css
 	trunk build $(TRUNK_BUILD_FILE) -d $(WWW) $(TRUNK_FLAGS)
 
+run_inner:
+	cd $(OUT_DIR); ./server $(PORT)
+
 run: dist
-	cd $(OUT_DIR); ./server 8000
+ifndef PORT
+run: PORT=8000
+endif
+run: run_inner
 
 run_release: release
-	cd $(OUT_DIR); ./server 80
+ifndef PORT
+run_release: PORT=80
+endif
+run_release: run_inner
 
 watch:
 	cargo watch --no-gitignore --ignore $(OUT_DIR) --ignore makefile --ignore dockerfile --ignore readme.md --ignore license -s "make run"

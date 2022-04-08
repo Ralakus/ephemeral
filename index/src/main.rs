@@ -76,8 +76,13 @@ impl Component for Content {
                 false
             }
             Message::Call(call) => {
-                self.calls.push(call);
-                true
+                let is_ok = matches!(call, ClientCall::Ok(_));
+                if is_ok {
+                    false
+                } else {
+                    self.calls.push(call);
+                    true
+                }
             }
         }
     }
@@ -121,11 +126,11 @@ impl Component for Content {
                         )
                     };
                     html! {
-                        <div>
-                            <span class={classes!(display_pair.0, "cursor-default")}>
-                                {format!("{}: ", display_pair.1)}
+                        <div class="flex">
+                            <span class={classes!(display_pair.0, "cursor-default", "flex-none", "mr-2")}>
+                                {display_pair.1} {":"}
                             </span>
-                            <span class="cursor-default">
+                            <span class="cursor-default flex-1">
                                 {display_pair.2}
                             </span>
                         </div>

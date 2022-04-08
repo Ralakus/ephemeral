@@ -1,6 +1,7 @@
 FROM debian:latest
 
-EXPOSE 80
+ENV PORT=80
+EXPOSE $PORT
 
 WORKDIR /usr/src/ephemeral/
 
@@ -21,4 +22,4 @@ RUN rustup target install wasm32-unknown-unknown
 RUN cargo install --locked trunk
 RUN make release
 
-CMD ["sh", "-c", "make run_release"]
+CMD ["sh", "-c", "make run_inner"]
