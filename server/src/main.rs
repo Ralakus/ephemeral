@@ -216,19 +216,16 @@ fn send_to_client(
     client: &Client,
     payload: &ClientCall,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    client.sender.as_ref().map_or_else(
-        || {
-            Err(ServerError {
-                message: format!("Client {} does not have an mspc sender", uuid),
-            }
-            .into())
-        },
-        |sender| {
-            let payload = serde_json::to_string(&payload)?;
-            sender.send(Ok(Message::text(payload)))?;
-            Ok(())
-        },
-    )
+    if let Some(ref sender) = client.sender {
+        let payload = serde_json::to_string(&payload)?;
+        sender.send(Ok(Message::text(payload)))?;
+        Ok(())
+    } else {
+        Err(ServerError {
+            message: format!("Client {} does not have an mspc sender", uuid),
+        }
+        .into())
+    }
 }
 
 fn broadcast_to_clients(
@@ -237,18 +234,16 @@ fn broadcast_to_clients(
     payload: &ClientCall,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let json = serde_json::to_string(&payload)?;
+
     for (client_uuid, client) in clients {
-        client
-            .sender
-            .as_ref()
-            .map(|sender| sender.send(Ok(Message::text(&json))).err())
-            .flatten()
-            .map(|e| {
+        if let Some(ref sender) = client.sender {
+            if let Err(e) = sender.send(Ok(Message::text(&json))) {
                 eprintln!(
                     "Failed to send message to client {} from client {} : {}",
                     client_uuid, uuid, e
                 );
-            });
+            }
+        }
     }
 
     Ok(())
