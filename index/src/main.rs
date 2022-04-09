@@ -18,6 +18,7 @@ enum Message {
 
 struct Content {
     calls: Vec<ClientCall>,
+    uuid: Option<u128>,
     username: Option<String>,
     wss: WebSocketService,
     input: NodeRef,
@@ -34,10 +35,12 @@ impl Component for Content {
             ClientCall::Notification(String::from(
                 "Please type in a username in the box below and submit to join",
             )),
+            ClientCall::Notification(String::from("To see available commands, type /help")),
         ];
 
         Self {
             calls,
+            uuid: None,
             username: None,
             wss: WebSocketService::new(),
             input: NodeRef::default(),
@@ -53,7 +56,16 @@ impl Component for Content {
                         return false;
                     }
 
-                    let call = if self.username.is_none() {
+                    let call = if input.value().starts_with("/") {
+                        let parts: Vec<String> =
+                            input.value().split(" ").map(ToString::to_string).collect();
+                        let command = &parts[0][1..];
+                        let args = &parts[1..];
+                        ServerCall::Command {
+                            command: command.into(),
+                            args: args.into(),
+                        }
+                    } else if self.username.is_none() {
                         self.username = Some(input.value());
 
                         ServerCall::Connect {
@@ -64,7 +76,6 @@ impl Component for Content {
                             content: input.value(),
                         }
                     };
-
                     if let Err(e) = self.wss.tx.try_send(call) {
                         let error = format!("Failed to send websocket message: {}", e);
                         log::error!("{}", error);
@@ -76,12 +87,16 @@ impl Component for Content {
                 false
             }
             Message::Call(call) => {
-                let is_ok = matches!(call, ClientCall::Ok(_));
-                if is_ok {
-                    false
-                } else {
-                    self.calls.push(call);
-                    true
+                match call {
+                    ClientCall::Ok(_) => false,
+                    ClientCall::Uuid(uuid) => {
+                        self.uuid = Some(uuid);
+                        false
+                    }
+                    _ => {
+                        self.calls.push(call);
+                        true
+                    }
                 }
             }
         }
@@ -117,6 +132,9 @@ impl Component for Content {
                         ),
                         ClientCall::Notification(message) => (
                             server_color, server_prefix, message.clone()
+                        ),
+                        ClientCall::Uuid(uuid) => (
+                            server_color, server_prefix, format!("Assigned uuid: {:x}", uuid)
                         ),
                         ClientCall::Ok(message) => (
                             "text-blue-400", server_prefix, message.clone()

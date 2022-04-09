@@ -10,6 +10,7 @@ pub mod socket {
     pub enum ServerCall {
         Connect { username: String },
         Send { content: String },
+        Command { command: String, args: Vec<String> },
         Notification(String),
 
         Ok(String),
@@ -21,6 +22,7 @@ pub mod socket {
             match self {
                 Self::Connect { username } => write!(f, "connect: {}", username),
                 Self::Send { content } => write!(f, "send: {}", content),
+                Self::Command { command, args } => write!(f, "command `{}` => {:?}", command, args),
                 Self::Notification(notification) => write!(f, "notification: {}", notification),
                 Self::Ok(message) => write!(f, "ok: {}", message),
                 Self::Error(error) => write!(f, "error: {}", error),
@@ -35,6 +37,7 @@ pub mod socket {
         Connection { username: String },
         Disconnection { username: String },
         Notification(String),
+        Uuid(u128),
 
         Ok(String),
         Error(String),
@@ -49,6 +52,7 @@ pub mod socket {
                 Self::Connection { username } => write!(f, "connection: {}", username),
                 Self::Disconnection { username } => write!(f, "disconnection: {}", username),
                 Self::Notification(noticiation) => write!(f, "notification: {}", noticiation),
+                Self::Uuid(uuid) => write!(f, "uuid: {}", uuid),
                 Self::Ok(message) => write!(f, "ok: {}", message),
                 Self::Error(error) => write!(f, "error: {}", error),
             }
