@@ -23,7 +23,7 @@ struct Args {
 }
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() {
     // Command line parsing
     let args = Args::parse();
 
@@ -56,8 +56,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Running the server with routes
     warp::serve(routes).run(([0, 0, 0, 0], args.port)).await;
-
-    Ok(())
 }
 
 /// Type alias for the commonly used Arc<RwLock<T>> type
@@ -75,35 +73,41 @@ type ClientsInner = HashMap<u128, ArcLock<Client>>;
 struct Client {
     uuid: u128,
     username: Option<String>,
+
+    /// Sender handle to send specific client a message
     tx: mpsc::UnboundedSender<Result<Message, warp::Error>>,
 }
 
 /// Websocket handler. Handles incomming connections and creates clients
+#[allow(clippy::redundant_pub_crate)]
 async fn handle_socket(
     broadcast: (broadcast::Sender<String>, broadcast::Receiver<String>),
     clients: Clients,
     socket: warp::ws::WebSocket,
 ) {
+    // Splits websocket and creates broadcast channels
     let (sender, reciever) = socket.split();
     let (broadcast_tx, broadcast_rx) = broadcast;
     let mut broadcast_rx = BroadcastStream::new(broadcast_rx);
-    let uuid = Uuid::new_v4().as_u128();
 
+    // Creates client sender and reciever which are forwarded to the websocket
     let (tx, rx) = mpsc::unbounded_channel();
     let rx = UnboundedReceiverStream::new(rx);
 
+    // Create client and adds it to data hash map
+    let uuid = Uuid::new_v4().as_u128();
     let client = Arc::new(RwLock::new(Client {
         uuid,
         username: None,
         tx: tx.clone(),
     }));
-
     {
         let mut clients = clients.write().await;
         clients.insert(uuid, client.clone());
     }
-
     eprintln!("Client {:x} connected", uuid);
+
+    // Sends the client their uuid
     let uuid_payload = ClientCall::Uuid(uuid);
     match serde_json::to_string(&uuid_payload) {
         Ok(message) => {
@@ -186,6 +190,7 @@ async fn handle_socket(
         };
     }
 
+    // Remove client from hash map
     let mut clients = clients.write().await;
     clients.remove(&uuid);
     eprintln!("Client {:x} disconnected", uuid);
@@ -200,17 +205,20 @@ async fn process_client_messages(
     broadcast_tx: broadcast::Sender<String>,
     tx: mpsc::UnboundedSender<Result<warp::ws::Message, warp::Error>>,
 ) {
+    // Listen to incomming websocket data
     while let Some(Ok(message)) = reciever.next().await {
+        // Assume websocket data is string unless conversion fails
         let message = if let Ok(m) = message.to_str() {
             m.into()
         } else if message.is_ping() {
-            format!("{{\"ok\":\"Pong\"}}")
+            "{{\"ok\":\"Pong\"}}".to_string()
         } else if message.is_close() {
-            format!("{{\"notification\":\"Goodbye\"}}")
+            break;
         } else {
-            format!("{{\"notification\":\"Non-text call. Ignoring processing.\"}}",)
+            "{{\"notification\":\"Non-text call. Ignoring processing.\"}}".to_string()
         };
 
+        // Parse json message to server call
         let call = match serde_json::from_str(&message) {
             Ok(c) => c,
             Err(e) => ServerCall::Error(format!(
@@ -221,11 +229,13 @@ async fn process_client_messages(
 
         println!("Client {:x} : {}", uuid, call);
 
+        // Process server call
         let response = match process_call(&clients, client.clone(), &broadcast_tx, call).await {
             Ok(r) => r,
             Err(e) => format!("{{\"error\":\"{}\"}}", e),
         };
 
+        // Send back status to client
         if let Err(e) = tx.send(Ok(Message::text(response))) {
             eprintln!("Failed to send response to client {:x} : {}", uuid, e);
             continue;
@@ -241,6 +251,7 @@ async fn process_call(
     call: ServerCall,
 ) -> Result<String, Box<dyn std::error::Error>> {
     let payload = match call {
+        // Sets client's username and broadcasts client's connection
         ServerCall::Connect { username } => {
             let mut client = client.write().await;
             client.username = Some(username.clone());
@@ -251,6 +262,8 @@ async fn process_call(
             broadcast_tx.send(message)?;
             ClientCall::Ok(format!("Successfully joined as {}", username))
         }
+
+        // Broadcast's client's message
         ServerCall::Send { content } => {
             let client = client.read().await;
             if let Some(ref username) = client.username {
@@ -266,9 +279,13 @@ async fn process_call(
                 ClientCall::Error("Client not connected with username".into())
             }
         }
+
+        // Processes client's command
         ServerCall::Command { command, args } => {
             hanndle_command(clients, client, command, args).await
         }
+
+        // Passthrough calls back to client
         ServerCall::Notification(notification) => ClientCall::Notification(notification),
         ServerCall::Ok(message) => ClientCall::Ok(message),
         ServerCall::Error(error) => ClientCall::Error(error),
@@ -277,6 +294,7 @@ async fn process_call(
     Ok(serde_json::to_string(&payload)?)
 }
 
+/// Client command handler
 async fn hanndle_command(
     clients: &Clients,
     client: ArcLock<Client>,
@@ -287,7 +305,7 @@ async fn hanndle_command(
         "help" => ClientCall::Notification("Available commands: [connected] [uuid]".into()),
         "uuid" => {
             let uuid = client.read().await.uuid;
-            ClientCall::Notification(format!("Your uuid is {:x}", uuid))
+            ClientCall::Notification(format!("Your uuid is [{:x}]", uuid))
         }
         "connected" => {
             let clients_lock = clients.read().await;
@@ -302,7 +320,7 @@ async fn hanndle_command(
             ClientCall::Notification(format!("{} users connected: {}", connected, usernames))
         }
         _ => ClientCall::Notification(
-            "Invalid command, try the `help` command to see available commands".into(),
+            "Invalid command, try the [help] command to see available commands".into(),
         ),
     }
 }

@@ -56,9 +56,9 @@ impl Component for Content {
                         return false;
                     }
 
-                    let call = if input.value().starts_with("/") {
+                    let call = if input.value().starts_with('/') {
                         let parts: Vec<String> =
-                            input.value().split(" ").map(ToString::to_string).collect();
+                            input.value().split(' ').map(ToString::to_string).collect();
                         let command = &parts[0][1..];
                         let args = &parts[1..];
                         ServerCall::Command {
