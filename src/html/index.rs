@@ -20,11 +20,11 @@ pub async fn index() -> Markup {
                 title { "Ephemeral" }
 
                 link rel="icon" type="image/ico" href="/favicon.ico";
-                link rel="stylesheet" href="/index.css";
+                link rel="stylesheet" href="/css/index.css";
 
-                script src="/alpine.js" defer {}
-                script src="/htmx.js" {}
-                script src="/htmx-ws.js" {}
+                script src="/js/alpine.3.14.8.min.js" defer {}
+                script src="/js/htmx.2.0.4.min.js" {}
+                script src="/js/htmx-ws.2.0.3.min.js" {}
             }
             body
                 class="flex flex-col h-screen bg-white antialiased"
@@ -32,9 +32,10 @@ pub async fn index() -> Markup {
                 ws-connect="/ws"
                 x-data=(format!("{{ historyLength: {}, username: null }}", WELCOME_MESSAGES.len()))
                 x-on:htmx:ws-after-message="historyLength += 1; let div = document.createElement('div'); div.id = `message-${historyLength}`; $refs.history.prepend(div);"
-                x-on:htmx:ws-open="username=null" {
+                x-on:htmx:ws-open="username=null"
+                x-bind:hx-target="`#message-${historyLength}`" {
 
-                div x-ref="history" class="flex flex-grow mx-12 md:mx-32 my-8 flex-col-reverse overflow-auto font-mono" x-bind:hx-swap-oob="`outerHTML:#message-${historyLength}`" {
+                div x-ref="history" class="flex flex-grow mx-12 md:mx-32 my-8 flex-col-reverse overflow-auto font-mono" {
                     div id=(format!("message-{}", WELCOME_MESSAGES.len())) {}
                     @for (i, welcome_message) in WELCOME_MESSAGES.iter().rev().enumerate() {
                         (message(icons::BELL_ALERT, i, "text-orange-400", "Server", welcome_message))

@@ -11,7 +11,7 @@ use axum::{
         ws::{Message, WebSocket},
         WebSocketUpgrade,
     },
-    http::header,
+    http::{HeaderValue, Method},
     routing::{any, get},
     Extension, Router,
 };
@@ -20,11 +20,15 @@ use futures::{stream::SplitStream, SinkExt, StreamExt};
 use maud::Markup;
 use serde::Deserialize;
 use tokio::sync::{broadcast, RwLock};
+use tower_http::{
+    compression::{CompressionLayer, DefaultPredicate},
+    cors::CorsLayer,
+};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 mod html;
 
-use html::{icons, index::WELCOME_MESSAGES, message::message, Css, Js};
+use html::{icons, index::WELCOME_MESSAGES, message::message};
 
 /// Command line arguments for server.
 #[derive(Parser, Debug)]
@@ -59,6 +63,19 @@ async fn main() {
     let (broadcast_tx, _broadcast_rx) = broadcast::channel::<BroadcastEvent>(128);
     let state = Arc::new(RwLock::new(broadcast_tx));
 
+    let comression_layer: CompressionLayer = CompressionLayer::new()
+        .br(true)
+        .deflate(true)
+        .gzip(true)
+        .zstd(true)
+        .compress_when(DefaultPredicate::new());
+
+    let cors_layer = CorsLayer::new()
+        // allow `GET` when accessing the resource
+        .allow_methods([Method::GET])
+        // allow requests from one origin
+        .allow_origin("http://licas.dev".parse::<HeaderValue>().unwrap());
+
     let routes =
         Router::new()
             .route(
@@ -73,15 +90,10 @@ async fn main() {
                 ),
             )
             .route("/", get(html::index::index))
-            .route("/index.css", get(|| async { Css(html::CSS) }))
-            .route("/alpine.js", get(|| async { Js(html::ALPINE_JS) }))
-            .route("/htmx.js", get(|| async { Js(html::HTMX_JS) }))
-            .route("/htmx-ws.js", get(|| async { Js(html::HTMX_WS_JS) }))
-            .route(
-                "/favicon.ico",
-                get(|| async { ([(header::CONTENT_TYPE, "image/x-icon")], html::FAVICON_ICO) }),
-            )
-            .layer(Extension(state));
+            .fallback(html::static_handler)
+            .layer(Extension(state))
+            .layer(comression_layer)
+            .layer(cors_layer);
 
     // Binding and running the HTTP server.
     tracing::info!("Running server on http://localhost:{}", args.port);

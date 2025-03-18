@@ -1,0 +1,2 @@
+[target.'cfg(target_os = "linux-musl")']
+rustflags = ["-C", "linker=ld.lld", "-C", "relocation-model=static", "-C", "strip=symbols"]
