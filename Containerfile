@@ -3,8 +3,8 @@ FROM rust:1
 WORKDIR /usr/src/ephemeral
 COPY . .
 
-RUN cargo install --path .
 RUN wget https://github.com/tailwindlabs/tailwindcss/releases/download/v4.1.10/tailwindcss-linux-x64-musl -O tailwindcss
+RUN cargo install --path .
 
 ENV PORT=80
 EXPOSE $PORT
