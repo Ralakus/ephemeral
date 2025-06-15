@@ -1,0 +1,14 @@
+name: Container Image CI
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the container image
+      run: docker build . --file Containerfile --tag ephemeral:${{  github.ref_name }}
